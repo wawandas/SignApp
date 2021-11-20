@@ -1,28 +1,62 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-  </div>
+  <form class="example-form">
+    <h3>To sign up please enter you email below</h3>
+    <SuperEmailField
+      v-model="user.email"
+      placeholder="Enter your email here"
+      pattern=".+@.+\..+"
+      required
+    />
+    <button type="submit" class="example-submit">send</button>
+  </form>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import SuperEmailField from "./components/SuperEmailField.vue";
 
 export default {
   name: "App",
   components: {
-    HelloWorld,
+    SuperEmailField,
+  },
+  data() {
+    return {
+      user: {
+        email: "",
+      },
+    };
   },
 };
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+body {
+  font-family: Fira Sans, Roboto, sans-serif;
+  background-color: #2e3283;
+}
+
+.example-form {
+  background: #f5f6fa;
+  position: relative;
+  display: flex;
+  box-shadow: 0 3px 5px rgb(0 0 0 / 30%);
+  padding: 40px;
+  justify-content: center;
+  margin: 50px auto;
+  max-width: 500px;
+  flex-flow: column wrap;
+  overflow: hidden;
+}
+
+button.example-submit {
+  background-color: #19d3a9;
+  border-width: 0;
+  border-radius: 4px;
+  color: #2e3283;
+  box-shadow: 0 3px 5px rgb(0 0 0 / 30%);
+  font-size: 18px;
+  outline: 0;
+  padding: 16px;
+  margin-top: 16px;
 }
 </style>
