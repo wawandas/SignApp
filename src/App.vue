@@ -12,17 +12,17 @@
 </template>
 
 <script>
-import SuperEmailField from "./components/SuperEmailField.vue";
+import SuperEmailField from './components/SuperEmailField.vue';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     SuperEmailField,
   },
   data() {
     return {
       user: {
-        email: "",
+        email: '',
       },
     };
   },
@@ -48,7 +48,7 @@ body {
   overflow: hidden;
 }
 
-button.example-submit {
+.example-submit {
   background-color: #19d3a9;
   border-width: 0;
   border-radius: 4px;
@@ -58,5 +58,14 @@ button.example-submit {
   outline: 0;
   padding: 16px;
   margin-top: 16px;
+}
+
+.example-submit:hover {
+  cursor: pointer;
+}
+
+.example-form:invalid .example-submit {
+  opacity: 0.5;
+  pointer-events: none;
 }
 </style>

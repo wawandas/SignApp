@@ -4,7 +4,7 @@
       <input
         type="email"
         class="email-input"
-        :class="{loading: isLoading}"
+        :class="{ loading: isLoading }"
         name="email"
         v-bind="$attrs"
         :value="value"
@@ -12,77 +12,92 @@
         @input="(event) => $emit('input', event.target.value)"
         @keyup="(event) => onKeyUp(event.target.value)"
         @keyup.delete="onDelete"
+        @blur="onBlur"
       />
       <button class="clear" @click.prevent="onClear">&times;</button>
     </div>
     <p v-if="autoCorrect" class="message" @click="onAutoCorrect">
-      would you like to correct your email to <b>{{ autoCorrect }}</b>?
+      would you like to correct your email to <b>{{ autoCorrect }}</b
+      >?
     </p>
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
   </div>
 </template>
 
 <script>
-
-import debounce from "lodash/debounce";
+import debounce from 'lodash/debounce';
 
 export default {
-  name: "SuperEmailField",
+  name: 'SuperEmailField',
 
   inheritAttrs: false,
 
   props: {
     value: {
       type: null,
-      default: "",
+      default: '',
     },
     error: {
       type: String,
-      default: "",
+      default: '',
     },
   },
 
   data() {
     return {
+      defaultErrorMessage: 'Please enter valid email!',
       isLoading: false,
       autoCorrect: null,
       errorMessage: this.error,
-      apiURL: `https://emailvalidation.abstractapi.com/v1/?api_key=${process.env.VUE_APP_API_KEY}`
-    }
+      apiURL: `https://emailvalidation.abstractapi.com/v1/?api_key=${process.env.VUE_APP_API_KEY}`,
+    };
   },
 
   methods: {
-    onKeyUp: debounce(async function(value) {
+    onKeyUp: debounce(async function (value) {
+      this.$refs.emailField.setCustomValidity('needs api validation');
+      this.errorMessage = null;
+
       const url = new URL(this.apiURL);
       const params = {
-        email: value
+        email: value,
       };
 
-      Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+      Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]));
 
-      if (this.$refs.emailField.validity.valid) {
-        this.$refs.emailField.setCustomValidity('');
+      if (!this.$refs.emailField.validity.patternMismatch) {
         this.isLoading = true;
 
         await fetch(url)
-          .then(response => response.json())
-          .then(response => {
+          .then((response) => response.json())
+          .then((response) => {
             const { deliverability, autocorrect } = response;
 
             this.isLoading = false;
 
-            if(autocorrect) {
+            if (autocorrect) {
               this.autoCorrect = autocorrect;
+              this.$refs.emailField.setCustomValidity('needs correction');
               return;
             }
 
-            if(deliverability === 'UNDELIVERABLE') {
+            if (deliverability === 'UNDELIVERABLE') {
               this.errorMessage = 'Please enter valid email!';
               this.$refs.emailField.setCustomValidity(this.errorMessage);
+              return;
             }
+
+            this.$refs.emailField.setCustomValidity('');
           });
       }
     }, 500),
+
+    onBlur() {
+      if (this.$refs.emailField.validity.patternMismatch) {
+        this.$refs.emailField.setCustomValidity(this.defaultErrorMessage);
+        this.errorMessage = this.defaultErrorMessage;
+      }
+    },
 
     onAutoCorrect() {
       this.$emit('input', this.autoCorrect);
@@ -92,12 +107,14 @@ export default {
 
     onClear() {
       this.$emit('input', '');
+      this.autoCorrect = null;
+      this.errorMessage = this.defaultErrorMessage;
     },
 
     onDelete() {
       this.autoCorrect = null;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -147,10 +164,10 @@ input {
 
 @keyframes around {
   0% {
-    transform: rotate(0deg)
+    transform: rotate(0deg);
   }
   100% {
-    transform: rotate(360deg)
+    transform: rotate(360deg);
   }
 }
 
@@ -176,11 +193,11 @@ input {
   padding: 0;
   outline: none;
   cursor: pointer;
-  transition: .1s;
+  transition: 0.1s;
 }
 
 .email-input:placeholder-shown + button {
   opacity: 0;
   pointer-events: none;
-} 
+}
 </style>
