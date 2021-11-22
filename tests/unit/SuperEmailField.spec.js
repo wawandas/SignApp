@@ -62,7 +62,7 @@ describe('SuperEmailField.vue', () => {
     const input = wrapper.find('.email-input');
 
     await input.setValue('vipsarev@gmail.com');
-    await input.trigger('keydown.enter');
+    await input.trigger('keyup');
 
     //wait for debounce callback
     await new Promise((resolve) => setTimeout(resolve, 600));

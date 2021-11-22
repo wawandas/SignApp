@@ -10,7 +10,7 @@
         :value="value"
         ref="emailField"
         @input="(event) => $emit('input', event.target.value)"
-        @keydown="(event) => onKeyUp(event.target.value)"
+        @keyup="(event) => onKeyUp(event.target.value)"
         @keydown.delete="onDelete"
         @blur="onBlur"
       />
@@ -63,6 +63,7 @@ export default {
     onKeyUp: debounce(async function (value) {
       this.$refs.emailField.setCustomValidity('needs api validation');
       this.errorMessage = null;
+      this.autoCorrect = null;
 
       if (!this.$refs.emailField.validity.patternMismatch) {
         this.isLoading = true;
@@ -91,6 +92,7 @@ export default {
               return;
             }
 
+            this.autoCorrect = null;
             this.$refs.emailField.setCustomValidity('');
             this.isValid = true;
           });
