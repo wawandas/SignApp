@@ -14,7 +14,7 @@
         @keydown.delete="onDelete"
         @blur="onBlur"
       />
-      <button class="clear" @click.prevent="onClear">&times;</button>
+      <button v-if="clearable" class="clear" @click.prevent="onClear">&times;</button>
     </div>
     <p v-if="autoCorrect" class="message" @click="onAutoCorrect">
       would you like to correct your email to <b>{{ autoCorrect }}</b
@@ -41,6 +41,10 @@ export default {
     error: {
       type: String,
       default: '',
+    },
+    clearable: {
+      type: Boolean,
+      default: true,
     },
   },
 
