@@ -5,6 +5,14 @@ import MockAdapter from 'axios-mock-adapter';
 import SuperEmailField from '@/components/SuperEmailField.vue';
 
 describe('SuperEmailField.vue', () => {
+  it('matches snapshot', () => {
+    const wrapper = mount(SuperEmailField, {
+      propsData: { value: '', pattern: '.+@.+..+', placeholder: 'Enter your email here' },
+    });
+
+    expect(wrapper.html()).toMatchSnapshot();
+  });
+
   it('renders with passed placeholder', () => {
     const wrapper = mount(SuperEmailField, {
       propsData: { value: '', pattern: '.+@.+..+', placeholder: 'Enter your email here' },
@@ -58,8 +66,6 @@ describe('SuperEmailField.vue', () => {
 
     //wait for debounce callback
     await new Promise((resolve) => setTimeout(resolve, 600));
-
-    console.log(input.element.validity);
 
     expect(input.classes('valid')).toBe(true);
   });

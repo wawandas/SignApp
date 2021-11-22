@@ -70,7 +70,6 @@ export default {
             },
           })
           .then(({ data }) => {
-            console.log(data);
             const { deliverability, autocorrect } = data;
 
             this.isLoading = false;

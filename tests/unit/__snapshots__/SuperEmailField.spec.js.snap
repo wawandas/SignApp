@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SuperEmailField.vue matches snapshot 1`] = `
+<div class="input-box">
+  <div class="input-wrapper"><input type="email" name="email" pattern=".+@.+..+" placeholder="Enter your email here" class="email-input"> <button class="clear">×</button></div>
+  <!---->
+  <!---->
+</div>
+`;
