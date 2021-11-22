@@ -4,14 +4,14 @@
       <input
         type="email"
         class="email-input"
-        :class="{ loading: isLoading }"
+        :class="{ loading: isLoading, valid: isValid }"
         name="email"
         v-bind="$attrs"
         :value="value"
         ref="emailField"
         @input="(event) => $emit('input', event.target.value)"
-        @keyup="(event) => onKeyUp(event.target.value)"
-        @keyup.delete="onDelete"
+        @keydown="(event) => onKeyUp(event.target.value)"
+        @keydown.delete="onDelete"
         @blur="onBlur"
       />
       <button class="clear" @click.prevent="onClear">&times;</button>
@@ -26,6 +26,7 @@
 
 <script>
 import debounce from 'lodash/debounce';
+import axios from 'axios';
 
 export default {
   name: 'SuperEmailField',
@@ -45,11 +46,12 @@ export default {
 
   data() {
     return {
+      isValid: false,
       defaultErrorMessage: 'Please enter valid email!',
       isLoading: false,
       autoCorrect: null,
       errorMessage: this.error,
-      apiURL: `https://emailvalidation.abstractapi.com/v1/?api_key=${process.env.VUE_APP_API_KEY}`,
+      baseUrl: `https://emailvalidation.abstractapi.com/v1/?api_key=${process.env.VUE_APP_API_KEY}`,
     };
   },
 
@@ -58,22 +60,21 @@ export default {
       this.$refs.emailField.setCustomValidity('needs api validation');
       this.errorMessage = null;
 
-      const url = new URL(this.apiURL);
-      const params = {
-        email: value,
-      };
-
-      Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]));
-
       if (!this.$refs.emailField.validity.patternMismatch) {
         this.isLoading = true;
 
-        await fetch(url)
-          .then((response) => response.json())
-          .then((response) => {
-            const { deliverability, autocorrect } = response;
+        await axios
+          .get(this.baseUrl, {
+            params: {
+              email: value,
+            },
+          })
+          .then(({ data }) => {
+            console.log(data);
+            const { deliverability, autocorrect } = data;
 
             this.isLoading = false;
+            this.isValid = false;
 
             if (autocorrect) {
               this.autoCorrect = autocorrect;
@@ -88,6 +89,7 @@ export default {
             }
 
             this.$refs.emailField.setCustomValidity('');
+            this.isValid = true;
           });
       }
     }, 500),
